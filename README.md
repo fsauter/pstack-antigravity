@@ -8,10 +8,29 @@ Antigravity CLI native instructions are [further down this page](#pstack).
 
 ## Install
 
-pstack is a folder of plain [Agent Skills](https://agentskills.io) (`skills/<name>/SKILL.md`). Native in Antigravity CLI and compatible with modern agent environments:
+### As an Antigravity Plugin (Recommended)
+
+Clone directly into your Antigravity plugins directory:
 
 ```bash
-npx skills add backnotprop/pstack
+# Global plugin (available in all workspaces)
+git clone https://github.com/fsauter/pstack-antigravity.git ~/.gemini/antigravity-cli/plugins/pstack
+
+# Or for a single workspace
+git clone https://github.com/fsauter/pstack-antigravity.git .agents/plugins/pstack
+```
+
+Or inside an interactive Antigravity CLI session:
+```text
+/plugin install /path/to/pstack-antigravity
+```
+
+### Via Skills CLI
+
+To install individual skills into your project:
+
+```bash
+npx skills add fsauter/pstack-antigravity
 ```
 
 The CLI shows every skill in a list you can search. Select the skills you want, then select your agents.
@@ -60,7 +79,11 @@ fork it. improve it. make it yours. PRs are welcome!
 ## install
 
 ```bash
-npx skills add backnotprop/pstack
+# Antigravity plugin:
+git clone https://github.com/fsauter/pstack-antigravity.git ~/.gemini/antigravity-cli/plugins/pstack
+
+# Or via skills CLI:
+npx skills add fsauter/pstack-antigravity
 ```
 
 ## get started
