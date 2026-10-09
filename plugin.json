@@ -1,0 +1,22 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "pstack",
+  "displayName": "pstack (Antigravity)",
+  "version": "0.15.15-antigravity",
+  "description": "Rigorous agent workflows you can parallelize with confidence in Antigravity CLI. Adapted from backnotprop/pstack by fsauter.",
+  "homepage": "https://github.com/fsauter/pstack-antigravity",
+  "repository": "https://github.com/fsauter/pstack-antigravity",
+  "author": {
+    "name": "Lauren Tan (upstream), Florian Sauter (Antigravity adaptation)"
+  },
+  "license": "MIT",
+  "keywords": [
+    "pstack",
+    "poteto-mode",
+    "workflow",
+    "principles",
+    "subagents",
+    "unslop",
+    "antigravity"
+  ]
+}

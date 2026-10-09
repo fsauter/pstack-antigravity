@@ -20,10 +20,9 @@ Scan for:
 
 Findings must point to skills, tools, or MCPs invoked in this transcript. Speculative routings to skills the parent never opened do not count. To check whether a skill was used, scan the transcript for:
 
-- `Read` tool calls against any `SKILL.md` file: workspace skill folders (`.cursor/skills/`, `.claude/skills/`, `.agents/skills/`, `.pi/skills/`), user-level ones (`~/.cursor/skills/`, `~/.claude/skills/`, `~/.codex/skills/`, `~/.pi/agent/skills/`, `~/.agents/skills/`), or plugin-installed paths (`~/.cursor/plugins/`, `~/.claude/plugins/`)
-- Skill-invocation tool calls (`Skill` in Claude Code, `skill` in OpenCode)
-- Subagent prompts (`Task`, `Agent`, `task`, `spawn_agent`) that name a skill path
-- Tool calls (Shell, Grep, MCP, etc.) that match a skill's documented commands
+- `view_file` or `Read` tool calls against any `SKILL.md` file: workspace skill folders (`.agents/skills/`, `<appDataDir>/skills/`, `skills/`) or plugin paths
+- Subagent prompts (`invoke_subagent`) that name a skill path
+- Tool calls (`run_command`, `call_mcp_tool`, etc.) that match a skill's documented commands
 
 Two valid finding shapes:
 

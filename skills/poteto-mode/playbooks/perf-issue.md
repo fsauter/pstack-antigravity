@@ -2,7 +2,7 @@
 
 **You own the measurement story. Plan, review, verify the numbers.** Tie every fix to a measurement, don't read source instead of measuring.
 
-1. Capture a baseline trace via the matching control skill. Vet the baseline, and each later number, with the **benchmark-checklist** skill.
+1. Capture a baseline trace via the matching control skill (**control-ui** / Chrome DevTools MCP or **control-cli**). Vet the baseline, and each later number, with the **benchmark-checklist** skill.
 2. `how` to ground hypotheses. Don't claim a perf ceiling without running it first.
    Try the performance mantras in order, cheapest first:
    1. Don't do it. Stop work whose result nothing uses rather than cheapening it.
@@ -14,7 +14,7 @@
    7. Do it cheaper.
 
    When an earlier mantra meets the target, stop.
-3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Delegate implementation to a subagent using your configured perf-issue model (default `grok-4.7-xhigh-fast`). Review the diff. Capture a post-fix trace.
+3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Delegate implementation to a subagent using your configured perf-issue model (default 'flash' or 'inherit'). Review the diff. Capture a post-fix trace.
    Apply the **sequence-verifiable-units** principle skill, verifying each attempt before trying the next.
 4. Parse and compare the artifacts (JSON to sqlite, diff). "Inconclusive" or wrong-surface is not a pass. Flag it.
 5. Cite the measurement in the PR.

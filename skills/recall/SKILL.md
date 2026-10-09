@@ -12,13 +12,8 @@ Keep it tight and on-topic. Read only what the in-scope threads need, then stop.
 
 Your context lives in two records. Your own chat history holds what you did and decided. The shared record holds everything that happened around the same code under other names: the symptoms users keep reporting, the fixes that shipped and got reverted, the errors still firing in prod. That second record is what the **why** skill searches, across source control, the issue tracker, chat and issue channels, long-form docs, and error tracking. A feature with a long bug tail keeps most of its story there, so don't reconstruct it from your transcripts alone.
 
-Transcripts live where your harness keeps them. Each file is JSONL. Find the active workspace's directory for your harness. If you can't tell which harness you are, check which of these exist for this workspace:
-
-- **Cursor:** `~/.cursor/projects/<slug>/agent-transcripts/<uuid>/<uuid>.jsonl`. `<slug>` is the workspace path with the leading slash dropped and each "/" turned into "-" (`/Users/you/proj` becomes `Users-you-proj`).
-- **Claude Code:** `~/.claude/projects/<slug>/<session-id>.jsonl`. `<slug>` is the workspace path with every character that isn't a letter or digit turned into "-" (`/Users/you/proj` becomes `-Users-you-proj`).
-- **Pi:** `~/.pi/agent/sessions/--<slug>--/<timestamp>_<id>.jsonl`. `<slug>` is the workspace path with the leading slash dropped and each "/" turned into "-" (`--Users-you-proj--`).
-- **Codex:** `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl`, not grouped by workspace. Keep only files whose first line has `payload.cwd` equal to the workspace path.
-- **OpenCode:** `~/.local/share/opencode/storage/`. Sessions are JSON files under `session/<project-id>/`, with their messages under `message/` and `part/`.
+Transcripts live in Antigravity CLI's brain directory:
+`<appDataDir>/brain/<conversation-id>/.system_generated/logs/transcript.jsonl` (or `transcript_full.jsonl`), located globally under `~/.gemini/antigravity-cli/brain/`.
 
 1. Classify, then route. One specific prior chat to resume is the `session-pickup` playbook, not this. Turning habits into a durable skill is `automate-me`. A human-readable summary of your work is a different task. Recall loads working context across recent chats before you act. If the user already gave you a full state capsule (paths, branch, the change), use it and skip the mining.
 2. Lock the scope before searching. Pin the window ("recent" is a real range, default the last 7 days), the topic if named, and the workspace (default the active one. Never read another project's transcripts without being asked). State the scope back. Never quietly turn "all" into "recent N".

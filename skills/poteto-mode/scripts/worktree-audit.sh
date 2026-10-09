@@ -22,16 +22,12 @@ prs=$(mktemp)
 gh pr list --author "@me" --state all --limit 1000 \
 	--json number,state,headRefName 2>/dev/null > "$prs" || echo "[]" > "$prs"
 
-# Chat transcript dirs for a path, per harness: Cursor, Claude Code, Pi.
-# Codex and OpenCode don't group sessions by project, so they aren't searched.
-slash_slug() { printf '%s' "$1" | sed 's#^/##; s#/#-#g'; }
-claude_slug() { printf '%s' "$1" | sed 's#[^A-Za-z0-9]#-#g'; }
+# Chat transcript dirs for Antigravity CLI brain logs.
 transcript_dirs() {
-	for d in "$HOME/.cursor/projects/$(slash_slug "$1")/agent-transcripts" \
-		"$HOME/.claude/projects/$(claude_slug "$1")" \
-		"$HOME/.pi/agent/sessions/--$(slash_slug "$1")--"; do
-		[ -d "$d" ] && printf '%s\n' "$d"
-	done
+	local app_data_dir="${APP_DATA_DIR:-$HOME/.gemini/antigravity-cli}"
+	if [ -d "$app_data_dir/brain" ]; then
+		find "$app_data_dir/brain" -maxdepth 3 -type d -name "logs" 2>/dev/null
+	fi
 }
 now=$(date +%s)
 
