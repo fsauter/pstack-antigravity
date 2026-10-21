@@ -24,19 +24,14 @@ Before spawning reviewers, state the intent in one clear paragraph from the user
 
 ## Step 3, Spawn Reviewers
 
-Launch reviewers concurrently via `invoke_subagent` (passing each reviewer in the `Subagents` array), using the `interrogate reviewers` line in `~/.agents/pstack-models.md` if present, or the table defaults below:
+Launch all reviewers in a single message with `invoke_subagent` (passing each reviewer in the `Subagents` array), one per entry on the `interrogate reviewers` line in the pstack settings file (`~/.agents/pstack-models.md`), labeled Reviewer A, B, and so on to match the entry count. If the file or that line is missing, use the table defaults.
 
 | Subagent | Role | Default model |
 |----------|------|---------------|
 | Reviewer A | Adversarial Reviewer A | `'pro'` |
-| Reviewer B | Adversarial Reviewer B | `'flash'` (or `'pro'`) |
+| Reviewer B | Adversarial Reviewer B | `'flash'` |
 
-For each reviewer:
-- `TypeName`: `'self'`
-- `Role`: `'Adversarial Reviewer A'` (or `'Adversarial Reviewer B'`)
-- `Model`: `'pro'` or `'flash'` (omit or use `'inherit'` for an `auto` or `inherit-parent` entry)
-- `Workspace`: `'inherit'`
-- `Prompt`: built from `references/reviewer-prompt.md`
+Each reviewer gets `TypeName: 'self'`, `Role: 'Adversarial Reviewer <label>'`, `Workspace: 'inherit'`, and `Model` set to its configured entry, or its table default when there is no configured line. Use `Model: 'inherit'` (or omit `Model`) for an `auto` or `inherit-parent` entry, so that reviewer runs on the parent model.
 
 Read `references/reviewer-prompt.md` and fill in the same template for every reviewer with the stated intent, the diff or file contents, the rubric from `references/rubric.md`, and the code-quality lens from `references/code-quality-review.md`. Pick each subagent's model tier for the job, per the Subagents section of the **poteto-mode** skill.
 

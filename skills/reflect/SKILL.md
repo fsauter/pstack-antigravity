@@ -18,19 +18,21 @@ In Antigravity CLI, the active conversation's transcript is located at `<appData
 
 ## 2. Spawn three reviewers in parallel
 
-Spawn three reviewers concurrently using Antigravity's `invoke_subagent` tool (`TypeName: 'self'`, `Workspace: 'inherit'`). Reviewers have MCP access to look up the tickets, chat threads, and observability traces the transcript references. Each reviewer and the synthesizer can also read its role line from `~/.agents/pstack-models.md` if present, per the Subagents section of the **poteto-mode** skill.
+Spawn three reviewers concurrently using Antigravity's `invoke_subagent` tool (`TypeName: 'self'`, `Workspace: 'inherit'`). Reviewers have MCP access to look up the tickets, chat threads, and observability traces the transcript references.
 
-| Lens | Role | Default `model` | Prompt template |
-|---|---|---|---|
-| Judgment | `'Reflect Judgment Reviewer'` | `'pro'` | `references/judgment-reviewer.md` |
-| Tooling | `'Reflect Tooling Reviewer'` | `'flash'` | `references/tooling-reviewer.md` |
-| Divergent | `'Reflect Divergent Reviewer'` | `'pro'` | `references/divergent-reviewer.md` |
+Each reviewer and the synthesizer name a role line in the pstack settings file (`~/.agents/pstack-models.md`) and a default model tier. Set `Model` to that line's value, or to the default if the file or the line is missing. Use `'inherit'` (or leave `Model` unset) when the value is `auto` or `inherit-parent`. Pick each subagent's model tier for the job, per the Subagents section of the **poteto-mode** skill.
+
+| Lens | Role | Role line | Default `Model` | Prompt template |
+|---|---|---|---|---|
+| Judgment | `'Reflect Judgment Reviewer'` | `reflect judgment, divergent, synthesizer` | `'pro'` | `references/judgment-reviewer.md` |
+| Tooling | `'Reflect Tooling Reviewer'` | `reflect tooling` | `'flash'` | `references/tooling-reviewer.md` |
+| Divergent | `'Reflect Divergent Reviewer'` | `reflect judgment, divergent, synthesizer` | `'pro'` | `references/divergent-reviewer.md` |
 
 Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in their response body.
 
 ## 3. Synthesize
 
-Spawn one synthesizer subagent using `invoke_subagent` (`TypeName: 'self'`, `Role: 'Reflect Synthesizer'`, `Model: 'pro'`). It spot-verifies citations through MCP. Pass `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. It returns an Accepted / Rejected / Backlog list.
+Spawn one synthesizer subagent using `invoke_subagent` (`TypeName: 'self'`, `Role: 'Reflect Synthesizer'`, `Model` from the `reflect judgment, divergent, synthesizer` line, default `'pro'`, `Workspace: 'inherit'`). It spot-verifies citations through MCP. Pass `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. It returns an Accepted / Rejected / Backlog list.
 
 ## 4. Structural enforcement check
 

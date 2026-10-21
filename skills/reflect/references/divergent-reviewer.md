@@ -18,11 +18,7 @@ Scan for:
 
 ## Scope to skills and tools the session actually used
 
-Route findings only to skills, tools, or MCPs this transcript used. Speculative routings to skills the parent never opened do not count. To check whether a skill was used, scan the transcript for:
-
-- `view_file` or `Read` tool calls against any `SKILL.md` file: workspace skill folders (`.agents/skills/`, `<appDataDir>/skills/`, `~/.agents/skills/`, `skills/`) or plugin paths
-- Subagent prompts (`invoke_subagent`) that name a skill path
-- Tool calls (`run_command`, `call_mcp_tool`, etc.) that match a skill's documented commands
+Route findings only to skills, tools, or MCPs this transcript used. A skill counts as used when the transcript shows a `read_file` of its `SKILL.md` (under a workspace skill folder `.agents/skills/`, a user-level one `~/.agents/skills/` or `~/.gemini/config/skills/`, or a plugin path under `~/.gemini/antigravity-cli/plugins/` or `skills/`), a subagent prompt (`invoke_subagent`) naming its path, or a tool call (`run_command`, `call_mcp_tool`, etc.) matching its documented commands. Speculative routings to skills the parent never opened do not count.
 
 Two finding shapes are valid:
 - The parent invoked the skill and you found a real gap in its body. Route to the skill's relevant section.

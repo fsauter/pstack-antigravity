@@ -14,8 +14,8 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Use the `arena runners` line in the pstack settings file (`~/.agents/pstack-models.md`) if present; otherwise default to one candidate on `'pro'` and one on `'flash'` (or both on `'pro'` for high-judgment tasks), per the Subagents section of the **poteto-mode** skill. Spawn more runners when the arena covers multiple design directions. Use the same model tier N times when the work is generation-bound rather than judgment-sensitive.
-4. Assign workspaces. Give each candidate its own isolated workspace via `invoke_subagent` (`Workspace: 'branch'`, or `/tmp/arena-<slug>/candidate-<n>/` when non-git), per the **separate-before-serializing-shared-state** principle skill.
+3. Pick the runners. Use the `arena runners` line in the pstack settings file (`~/.agents/pstack-models.md`). If the file or that line is missing, default to one each on `'pro'` and `'flash'`. An `auto` or `inherit-parent` entry in this line or the cross-judge line means the parent model, so use `Model: 'inherit'` (or omit `Model`) for it. If `invoke_subagent` rejects a configured entry, run that seat on `'pro'` or `'flash'` and say so. Spawn more runners when the arena covers multiple design directions. Use the same model tier N times when the work is generation-bound rather than judgment-sensitive. Pick each subagent's model tier for the job, per the Subagents section of the **poteto-mode** skill.
+4. Give each candidate its own output location (an isolated workspace via `Workspace: 'branch'` or a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
 
 ## Phase B: Fan out
 
@@ -25,7 +25,7 @@ If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, spawn one readonly judge subagent using `invoke_subagent` with `Model: 'pro'` (`TypeName: 'self'`, `Role: 'Arena Cross-Judge'`, `Workspace: 'inherit'`). It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
+After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in the pstack settings file (`~/.agents/pstack-models.md`). If the file or that line is missing, choose from `'pro'` and `'flash'` (default `'pro'`). Spawn one readonly judge subagent using `invoke_subagent` on that model (`TypeName: 'self'`, `Role: 'Arena Cross-Judge'`, `Workspace: 'inherit'`). It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
 
 ## Phase D: Pick a base
 

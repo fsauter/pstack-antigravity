@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Subagents are invoked using Antigravity's `invoke_subagent` tool (`TypeName: 'self'`, `Workspace: 'inherit'`), reading role defaults from `~/.agents/pstack-models.md` if present or using `Model: 'flash'` for exploration (`how explorer`) and `Model: 'pro'` for explanation/synthesis (`how explainer`), per the Subagents section of the **poteto-mode** skill.
+Every spawn is a read-only subagent invoked via `invoke_subagent` with `TypeName: 'self'` and `Workspace: 'inherit'`. Explorers use the `how explorer` line in the pstack settings file (`~/.agents/pstack-models.md`) (default `'flash'`), and every explainer uses the `how explainer` line (default `'pro'`). Set `Model` to that line's value, or to the default if the file or the line is missing. Use `'inherit'` (or leave `Model` unset) when the value is `auto` or `inherit-parent`. Pick each subagent's model tier for the job, per the Subagents section of the **poteto-mode** skill.
 
 ## 1. Assess complexity
 

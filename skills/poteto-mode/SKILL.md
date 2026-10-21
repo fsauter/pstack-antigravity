@@ -94,12 +94,12 @@ Read the leaf skill in full for any principle you apply. Each entry names when i
 
 **Defaults for every `invoke_subagent` call:**
 - `Workspace: "branch"` for code-writing delegates to provide isolated git branch/worktree execution without polluting the main working copy. Use `"inherit"` for read-only exploration or verification that runs in the main workspace.
-- `Model`: Read `~/.agents/pstack-models.md` (written by `/setup-pstack`) at task start if it exists. Match the model tier to the job: use `"flash"` (or `"flash_lite"` for trivial lookups) for fast mechanical code edits, explorers, and swarm workers; use `"pro"` for deep judgment, cross-cutting architectural changes, concurrency, complex algorithms, synthesizers, and reviewers; use `"inherit"` (or omit `Model`) when the role specifies `inherit-parent` or `auto`, or unless the skill or user specifies another tier.
+- `Model`: Read `~/.agents/pstack-models.md` (written by `/setup-pstack`) at task start if it exists. Defaults are `"flash"` for code and explorers, `"pro"` for prose and judgment. Code delegates tier by difficulty. The hardest changes (cross-cutting design, gnarly concurrency, subtle algorithms) go to your strongest judgment model (`"pro"`), whether the task needs judgment on vague intent or is a precisely specified sequence of steps to execute to the letter. Trivial mechanical edits go to your fast model (`"flash"` or `"flash_lite"`). Per-role lines in the `/setup-pstack` rule override these defaults and the model choices in the routed skills (`how`, `why`, `arena`, `swarm`, `architect`, `interrogate`, `reflect`). A role with no line keeps its default, and a role line of `inherit-parent` or `auto` runs that role on the parent chat model (use `Model: "inherit"` or omit `Model`). Each code playbook's configured model comes from its line (`feature, refactoring`, `bug-fix`, `perf-issue`, or `hillclimb`), and the hardest changes read `hardest tasks`. Prose and judgment read `judgment and prose`. Verification stays on the `swarm workers` model (`"flash"` by default).
 - Pass file pointers and paths rather than inlining bulk context.
 
 You own every subagent's work. Review the diff and write your own summary, don't pass through what it said. A second opinion is the same prompt against a fresh subagent on a different model tier. Agreement is high-signal.
 
-**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Resume or message an existing subagent only when the new work strictly needs state that lives in that agent (its local process, running server, or watcher).
+**Fresh subagents by default.** Give new work to a fresh subagent with consolidated scope, meaning the original brief, every later directive, and the prior agent's report and branch. This holds for a fix round, a follow-up, a retry, and the next queue item. Resume, message, or queue a follow-up on an existing subagent only when the new work strictly needs state that lives in that agent and is costly to move: its local checkout, its uncommitted changes, or a process it still runs, such as a dev server, a simulator, or a babysit watcher. A stop or hold order to a running agent is not reuse. A role such as a PR owner outlives its agent. Once that agent returns, a fresh agent takes the role's next round. Interrupt-chained resumes silently drop directives, so fire a fresh subagent with consolidated scope rather than trusting a "done" summary.
 
 ## Antigravity CLI Environment
 
@@ -138,26 +138,26 @@ Open a todolist whose first items are the matched playbook's steps, copied in ve
 
 A large or cross-cutting effort (a migration across many call sites, an ambitious multi-part change), or work the user steps away from to trust later, routes to the **figure-it-out** skill even when a narrower playbook like Feature fits. Use **figure-it-out** whenever no bundled playbook fits. It designs a bespoke, rigorous playbook for the task. A standing project-scale program (multi-day, many stacked PRs, a fleet of subagents under one coordinator) routes to **Orchestrate** instead. figure-it-out designs one bespoke run, orchestrate runs the program.
 
-- **Investigation.** Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y. `playbooks/investigation.md`.
-- **Bug fix.** A reported defect to reproduce, root-cause, and fix with runtime evidence. `playbooks/bug-fix.md`.
-- **Perf issue.** A measured slowness to trace and improve against a baseline. `playbooks/perf-issue.md`.
-- **Hillclimb.** Sustained, scientific improvement of one metric against a target: loop hypotheses with before/after measurement, a decision log, and one commit per accepted win. Distinct from Perf issue, which is a one-off fix. `playbooks/hillclimb.md`.
-- **Runtime forensics.** Diagnose a runtime symptom (leak, idle-CPU spin, glitch) from live instrumentation. The deliverable is a diagnosis, not a fix. `playbooks/runtime-forensics.md`.
-- **Trace forensics.** Diagnose a captured profiling artifact (cpuprofile, trace, spindump, heap snapshot) handed to you after the fact. The deliverable is a diagnosis, not a fix. `playbooks/trace-forensics.md`.
-- **Feature.** New or changed behavior, built from a named data shape. `playbooks/feature.md`.
-- **Refactoring.** A behavior-preserving change to structure or shape (rename, extract, inline, dedupe, move). `playbooks/refactoring.md`.
-- **Prototype.** A throwaway sketch to make a design or behavioral decision cheaply, or to settle an empirical fork by observing it instead of asking the human ("prototype", "mock it up", "try this layout", "sketch it to decide"). `playbooks/prototype.md`.
-- **Visual parity.** Pixel-exact UI equivalence: matching two implementations or migrating a styling system. `playbooks/visual-parity.md`.
+- **Investigation.** Read-only question: how does X work, why was Y built this way, are we sure about Z, should we do X or Y.
+- **Bug fix.** A reported defect to reproduce, root-cause, and fix with runtime evidence.
+- **Perf issue.** A measured slowness to trace and improve against a baseline.
+- **Hillclimb.** Sustained, scientific improvement of one metric against a target: loop hypotheses with before/after measurement, a decision log, and one commit per accepted win. Distinct from Perf issue, which is a one-off fix.
+- **Runtime forensics.** Diagnose a runtime symptom (leak, idle-CPU spin, glitch) from live instrumentation. The deliverable is a diagnosis, not a fix.
+- **Trace forensics.** Diagnose a captured profiling artifact (cpuprofile, trace, spindump, heap snapshot) handed to you after the fact. The deliverable is a diagnosis, not a fix.
+- **Feature.** New or changed behavior, built from a named data shape.
+- **Refactoring.** A behavior-preserving change to structure or shape (rename, extract, inline, dedupe, move).
+- **Prototype.** A throwaway sketch to make a design or behavioral decision cheaply, or to settle an empirical fork by observing it instead of asking the human ("prototype", "mock it up", "try this layout", "sketch it to decide").
+- **Visual parity.** Pixel-exact UI equivalence: matching two implementations or migrating a styling system.
 - **Authoring or modifying a skill.** Writing or editing a SKILL.md. File: `playbooks/authoring-a-skill.md`.
-- **Eval.** Testing how a skill, structure, or prompt change affects agent behavior before promoting it. `playbooks/eval.md`.
-- **Babysit.** Driving a PR or a stack to merge-ready: conflicts, review threads, CI. `playbooks/babysit.md`.
-- **Shipping.** The half after Babysit. Independently verifying a green stack, then landing the contiguous verified run bottom-up through `gh` by default or Origin when its CLI is available. `playbooks/shipping.md`.
-- **Autonomous run.** A long task to drive to completion without stopping ("run until done", "/goal"). `playbooks/autonomous-run.md`.
-- **Orchestrate.** A standing project handed to one coordinator chat: multi-day, many stacked PRs, dozens to hundreds of subagents, minimal human turns ("run this whole project", "own this migration until it lands"). Distinct from Autonomous run, which drives one task to a predicate. Work one agent could finish inside the session's budget routes there, not here, however program-shaped the phrasing sounds. `playbooks/orchestrate.md`.
-- **Autopilot-full.** A queue of independent PRs run to merged with full autonomy. One owner per PR carries build through merge, and the root swarm-verifies each PR before its owner merges ("autopilot this queue", "full autopilot", one-owner-per-PR programs). `playbooks/autopilot-full.md`.
-- **Autopilot-stack.** A queue of changes built and verified with full autonomy, delivered as one linear reviewed base-branch stack the operator lands ("autopilot-stack", "stack them, don't ship", "build the stack, I'll land it"). `playbooks/autopilot-stack.md`.
-- **Session pickup.** Resuming or taking over a prior agent's in-flight work from a transcript or pushed branch. `playbooks/session-pickup.md`.
-- **Pause safely.** Suspending in-flight work cleanly so it can be resumed, on an explicit pause, going offline, a session restart, or imminent context compaction (`/compact`). The complement to Session pickup. File: `playbooks/pause-safely.md`.
+- **Eval.** Testing how a skill, structure, or prompt change affects agent behavior before promoting it.
+- **Babysit.** Driving a PR or a stack to merge-ready: conflicts, review threads, CI.
+- **Shipping.** The half after Babysit. Independently verifying a green stack, then landing the contiguous verified run bottom-up through `gh` by default or Origin when its CLI is available.
+- **Autonomous run.** A long task to drive to completion without stopping ("run until done", "/goal").
+- **Orchestrate.** A standing project handed to one coordinator chat: multi-day, many stacked PRs, dozens to hundreds of subagents, minimal human turns ("run this whole project", "own this migration until it lands"). Distinct from Autonomous run, which drives one task to a predicate. Work one agent could finish inside the session's budget routes there, not here, however program-shaped the phrasing sounds.
+- **Autopilot-full.** A queue of independent PRs run to merged with full autonomy. One owner per PR carries build through merge, and the root swarm-verifies each PR before its owner merges ("autopilot this queue", "full autopilot", one-owner-per-PR programs).
+- **Autopilot-stack.** A queue of changes built and verified with full autonomy, delivered as one linear reviewed base-branch stack the operator lands ("autopilot-stack", "stack them, don't ship", "build the stack, I'll land it").
+- **Session pickup.** Resuming or taking over a prior agent's in-flight work from a transcript or pushed branch.
+- **Pause safely.** Suspending in-flight work cleanly so it can be resumed, on an explicit pause, going offline, a session restart, or imminent context compaction (`/compact`). The complement to Session pickup.
 - **Multi-phase or multi-PR plan.** Work that spans phases or stacked PRs. File: `playbooks/multi-phase-plan.md`.
 - **Worktree and simulator cleanup.** Reclaiming local disk by pruning merged or abandoned git worktrees and stale iOS simulators ("what's using my disk", "clean up worktrees", "prune safe-to-prune worktrees", "free up space", "delete old simulators"). File: `playbooks/worktree-cleanup.md`.
-- **Opening a PR.** Invoked at the end of every other playbook. `playbooks/opening-a-pr.md`.
+- **Opening a PR.** Invoked at the end of every other playbook.
