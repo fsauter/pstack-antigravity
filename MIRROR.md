@@ -44,11 +44,11 @@ git remote add upstream https://github.com/backnotprop/pstack.git
 
    A conflict means upstream changed a line this mirror also adapted. Keep upstream's intent and reapply the Antigravity-CLI native wording / tools.
 
-3. Refresh the bundled Comment Sicko prompt, then check that no new Cursor/Claude-only instructions arrived:
+3. Refresh the bundled Comment Sicko prompt, then check that no new external-harness instructions arrived:
 
    ```bash
    cp agents/comment-sicko.md skills/no-comments/references/comment-sicko.md
-   git diff upstream@{1} upstream -- skills | grep -nE '\.cursor/|agent-transcripts|cursor-team-kit|create-skill|Task|/loop\s+\d'
+   git diff upstream@{1} upstream -- skills | grep -nE 'subagent_type|agent-transcripts|create-skill|Task|/loop\s+\d'
    ```
 
    Rewrite any new hits using Antigravity-native equivalents:

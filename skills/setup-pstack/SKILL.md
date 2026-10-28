@@ -25,7 +25,7 @@ The default role-to-model mapping is the rule shape shown in step 5 below. If `~
 - `flash — fast, lightweight exploration and mechanical edits`
 - `inherit — match the parent conversation model`
 
-**(b) Show the roles and confirm.** Show every role with its model tier, and list each line step 2 dropped. Ask whether to accept as-is or change specific roles using `ask_question`, offering `'pro'`, `'flash'`, `'flash_lite'`, `'inherit'`, `inherit-parent`, and `auto` (which all run on the parent chat model). For panel roles (`arena runners`, `architect runners`, `interrogate reviewers`) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, from which Arena selects one judge model. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+**(b) Show the roles and confirm.** Show every role with its model tier, and list each line step 2 dropped. Ask whether to accept as-is or change specific roles using `ask_question`, offering `'pro'`, `'flash'`, `'flash_lite'`, `'inherit'`, `inherit-parent`, and `auto` (which all run on the parent chat model). For panel roles (`arena runners`, `architect runners`, `interrogate reviewers`) the value is a list, and one subagent runs per entry, alias entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena runs one judge. It tries only values that differ from the parent's model tier, in list order, so order it by preference. An `inherit-parent`, `auto`, or `inherit` value never judges. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
 ### 4. Validate
 

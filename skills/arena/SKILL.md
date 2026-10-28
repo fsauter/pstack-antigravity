@@ -14,7 +14,7 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Use the `arena runners` line in the pstack settings file (`~/.agents/pstack-models.md`). If the file or that line is missing, default to one each on `'pro'` and `'flash'`. An `auto` or `inherit-parent` entry in this line or the cross-judge line means the parent model, so use `Model: 'inherit'` (or omit `Model`) for it. If `invoke_subagent` rejects a configured entry, run that seat on `'pro'` or `'flash'` and say so. Spawn more runners when the arena covers multiple design directions. Use the same model tier N times when the work is generation-bound rather than judgment-sensitive. Pick each subagent's model tier for the job, per the Subagents section of the **poteto-mode** skill.
+3. Pick the runners. Use the `arena runners` line in the pstack settings file (`~/.agents/pstack-models.md`). If the file or that line is missing, default to one each on `'pro'` and `'flash'`. An `auto` or `inherit-parent` entry in this line means the parent model, so use `Model: 'inherit'` (or omit `Model`) for it. If `invoke_subagent` rejects a configured entry, run that seat on `'pro'` or `'flash'` and say so. If dropped seats leave fewer than two runners, add runners until there are two, or one when the line has one entry. Run each added runner on a remaining runner's model tier, or use `Model: 'inherit'` so it runs on the parent model when none remain, and say so. Spawn more runners when the arena covers multiple design directions. Use the same model tier N times when the work is generation-bound rather than judgment-sensitive. Pick each subagent's model tier for the job, per the Subagents section of the **poteto-mode** skill.
 4. Give each candidate its own output location (an isolated workspace via `Workspace: 'branch'` or a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per the **separate-before-serializing-shared-state** principle skill.
 
 ## Phase B: Fan out
@@ -25,11 +25,11 @@ If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in the pstack settings file (`~/.agents/pstack-models.md`). If the file or that line is missing, choose from `'pro'` and `'flash'` (default `'pro'`). Spawn one readonly judge subagent using `invoke_subagent` on that model (`TypeName: 'self'`, `Role: 'Arena Cross-Judge'`, `Workspace: 'inherit'`). It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
+After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in the pstack settings file (`~/.agents/pstack-models.md`). If the file or that line is missing, choose from `'pro'` and `'flash'`. Spawn one readonly judge subagent using `invoke_subagent` (`TypeName: 'self'`, `Role: 'Arena Cross-Judge'`, `Workspace: 'inherit'`). Try entries in pool order, preferring a model tier different from the parent's when known. An `auto`, `inherit-parent`, or `'inherit'` entry is the parent model, so it never judges. If `invoke_subagent` rejects an entry, move to the next entry in the pool; if none runs, skip the judge, pick the base alone in Phase D, and say so. The judge sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't spawn it while candidates are still writing.
 
 ## Phase D: Pick a base
 
-Read every candidate end to end before picking. Score each against the rubric criterion by criterion, not on holistic feel, and compare with the cross-judge. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
+Read every candidate end to end before picking. Score each against the rubric criterion by criterion, not on holistic feel, and compare with the cross-judge when Phase C ran one. Agreement on the base confirms the pick. Disagreement means one of you is biased or the rubric was ambiguous. Read both rationales before deciding.
 
 Pick the base a future maintainer can extend most easily without breaking invariants. When two feel tied, prefer the cleaner boundary or smaller API, per the Laziness Protocol.
 
@@ -45,4 +45,4 @@ Verify the synthesized artifact like any other output, per the **prove-it-works*
 
 ## Outputs
 
-One synthesized artifact, with a short synthesis note alongside naming the base and why, the cross-judge's verdict, each graft with its source candidate, what was rejected and why, any convergence or dropouts, and the verification result.
+One synthesized artifact, with a short synthesis note alongside naming the base and why, the cross-judge's verdict or that Phase C skipped the judge, each graft with its source candidate, what was rejected and why, any convergence or dropouts, and the verification result.

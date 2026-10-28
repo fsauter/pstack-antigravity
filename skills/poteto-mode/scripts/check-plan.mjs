@@ -72,7 +72,7 @@ for (let i = start; i < raw.length; i++) {
 	lines.push({ n, text, code });
 	if (code) continue;
 	const prose = text
-		.replace(/`[^`]*`/g, "`")
+		.replace(/(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)/g, "`")
 		.replace(/!\[[^\]]*\]\([^)]*\)/g, "")
 		.replace(/\]\([^)]*\)/g, "]");
 	if (/[\u2013\u2014]/.test(prose)) fail(n, "long dash");
@@ -116,8 +116,8 @@ else {
 	for (const marker of PROGRAM_MARKERS) {
 		if (!bodyText(program).includes(marker)) fail(program.n, `Program checklist lacks "${marker}"`);
 	}
-	if (!bodyText(program).includes("/loop 1h") && !bodyText(program).includes("schedule")) {
-		fail(program.n, `Program checklist lacks audit tick cadence ("/loop 1h" or "schedule")`);
+	if (!bodyText(program).includes("schedule")) {
+		fail(program.n, `Program checklist lacks audit tick cadence ("schedule")`);
 	}
 }
 
